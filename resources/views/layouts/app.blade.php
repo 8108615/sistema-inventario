@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased bg-gray-900 text-gray-100">
+
+    <div class="flex min-h-screen">
+
+        <aside class="w-64 bg-gray-900 border-r border-gray-800 hidden md:block">
+            <div class="p-6 text-white font-bold text-xl border-b border-gray-800">
+                SISTEMA INVENTARIO
+            </div>
+            <nav class="mt-4 space-y-1">
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-home class="w-5 h-5 mr-3" />
+                    Panel
+                </a>
+                <a href="{{ route('categorias.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('categorias.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-tag class="w-5 h-5 mr-3" />
+                    Categorías
+                </a>
+            </nav>
+        </aside>
+
+        <div class="flex-1 flex flex-col">
+
+            <header class="bg-gray-900 border-b border-gray-800 h-16 flex items-center justify-end px-6">
+                <livewire:layout.navigation />
+            </header>
+
+            <main class="p-6">
+                {{ $slot }}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        window.addEventListener('alerta', event => {
+            Swal.fire({
+                position: "top-end",
+                icon: event.detail[0].tipo,
+                title: event.detail[0].mensaje,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+
+        window.addEventListener('confirmar-eliminacion', event => {
+            Swal.fire({
+                title: "Eliminar categoría",
+                text: "¿Estás seguro de eliminar la categoría " + event.detail[0].nombre + "?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33", // Rojo para eliminar
+                cancelButtonColor: "#6b7280", // Gris
+                confirmButtonText: "Eliminar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('eliminar-confirmado', { id: event.detail[0].id });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
