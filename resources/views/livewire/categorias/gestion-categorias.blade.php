@@ -44,12 +44,17 @@
                         </span>
                     </td>
                     <td class="p-4 flex justify-center space-x-2">
-                        <button wire:click="editar({{ $cat->id }})" class="text-green-400 hover:text-green-200">
+
+                        <button wire:click="editar({{  $cat->id}})" class="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
                             <x-heroicon-o-pencil class="w-5 h-5" />
                         </button>
-                        <button wire:click="confirmarEliminar({{ $cat->id }})" class="text-red-400 hover:text-red-200">
+
+                        <button wire:click="confirmarEliminar({{ $cat->id }})" 
+                            class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
                             <x-heroicon-o-trash class="w-5 h-5" />
                         </button>
+
+                        
                     </td>
                 </tr>
                 @endforeach
@@ -68,27 +73,40 @@
 
     @if($isModalOpen)
         <div class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
-            <div class="bg-gray-800 rounded-lg w-1/3 border border-gray-700 overflow-hidden">
-                <div class="{{ $categoria_id ? 'bg-green-600' : 'bg-blue-600' }} p-4">
+            <div class="bg-gray-800 rounded-lg w-1/3 border border-gray-700 overflow-hidden shadow-2xl">
+                <div class="{{ $categoria_id ? 'bg-green-600' : 'bg-blue-600' }} p-4 flex justify-between items-center">
                     <h2 class="text-white text-xl font-bold">
                         {{ $categoria_id ? 'Editar Categoría' : 'Crear Categoría' }}
                     </h2>
+                    <button wire:click="toggleModal" class="text-white hover:text-gray-200">✕</button>
                 </div>
 
-                <div class="p-6">
-                    <label class="text-gray-300 block mb-1">Nombre (*)</label>
-                    <input wire:model="nombre" wire:keydown.enter="guardar" type="text" placeholder="Nombre de la categoría"
-                        class="w-full p-2 mb-3 bg-gray-700 text-white rounded border border-gray-600">
-                    @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="text-gray-300 block mb-1 text-sm font-medium">Nombre (*)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-gray-500">🏷️</span>
+                            <input wire:model="nombre" wire:keydown.enter="guardar" type="text" placeholder="Nombre de la categoría"
+                                class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
 
-                    <label class="text-gray-300 block mb-1">Descripción</label>
-                    <textarea wire:model="descripcion" placeholder="Descripción"
-                        class="w-full p-2 mb-3 bg-gray-700 text-white rounded border border-gray-600">
-                    </textarea>
+                    <div>
+                        <label class="text-gray-300 block mb-1 text-sm font-medium">Descripción</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-gray-500">📝</span>
+                            <textarea wire:model="descripcion" placeholder="Descripción de la categoría"
+                                class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none h-24">
+                            </textarea>
+                        </div>
+                    </div>
 
-                    <div class="flex justify-end space-x-2 mt-4">
-                        <button wire:click="toggleModal" class="text-gray-400 hover:text-white px-4 py-2">Cancelar</button>
-                        <button wire:click="guardar" class="{{ $categoria_id ? 'bg-green-600' : 'bg-blue-600' }} text-white px-4 py-2 rounded">
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button wire:click="toggleModal" class="px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                            Cancelar
+                        </button>
+                        <button wire:click="guardar" class="px-5 py-2.5 {{ $categoria_id ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-500' }} text-white rounded-lg transition">
                             {{ $categoria_id ? 'Actualizar' : 'Guardar' }}
                         </button>
                     </div>

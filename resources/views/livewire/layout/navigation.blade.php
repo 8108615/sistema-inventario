@@ -81,8 +81,15 @@ new class extends Component
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')" wire:navigate>
+                {{ __('Roles') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('categorias.index')" :active="request()->routeIs('categorias.index')" wire:navigate>
                 {{ __('Categorías') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('sucursales.index')" :active="request()->routeIs('sucursales.index')" wire:navigate>
+                {{ __('Sucursales') }}
             </x-responsive-nav-link>
         </div>
 

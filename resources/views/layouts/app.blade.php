@@ -21,10 +21,20 @@
                     <x-heroicon-o-home class="w-5 h-5 mr-3" />
                     Panel
                 </a>
+                <a href="{{ route('roles.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('roles.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-shield-check class="w-5 h-5 mr-3" />
+                    Roles
+                </a>
                 <a href="{{ route('categorias.index') }}"
                     class="flex items-center px-6 py-3 transition {{ request()->routeIs('categorias.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                     <x-heroicon-o-tag class="w-5 h-5 mr-3" />
                     Categorías
+                </a>
+                <a href="{{ route('sucursales.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('sucursales.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-building-office class="w-5 h-5 mr-3" />
+                    Sucursales
                 </a>
             </nav>
         </aside>
@@ -56,13 +66,14 @@
 
         window.addEventListener('confirmar-eliminacion', event => {
             Swal.fire({
-                title: "Eliminar categoría",
-                text: "¿Estás seguro de eliminar la categoría " + event.detail[0].nombre + "?",
+                // Cambiamos el título a algo genérico o dinámico
+                title: "¿Estás seguro?", 
+                text: "¿Deseas eliminar: " + event.detail[0].nombre + "?",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#d33", // Rojo para eliminar
-                cancelButtonColor: "#6b7280", // Gris
-                confirmButtonText: "Eliminar"
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#6b7280",
+                confirmButtonText: "Sí, eliminar"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch('eliminar-confirmado', { id: event.detail[0].id });
