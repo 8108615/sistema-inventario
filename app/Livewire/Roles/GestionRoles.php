@@ -7,11 +7,12 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class GestionRoles extends Component
 {
 
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public $name, $role_id;
     public $search = '';
@@ -25,7 +26,11 @@ class GestionRoles extends Component
 
     public function guardar()
     {
-        $this->validate(['name' => 'required|unique:roles,name,' . $this->role_id]);
+        $this->role_id ? $this->authorize('roles.editar') : $this->authorize('roles.crear');
+        // Validamos el nombre. Si es edición, ignoramos el ID actual para el unique
+        $this->validate([
+            'name' => 'required|unique:roles,name,' . $this->role_id
+        ]);
 
         $esEdicion = !empty($this->role_id);
         Role::updateOrCreate(['id' => $this->role_id], ['name' => mb_strtoupper($this->name, 'UTF-8')]);
@@ -37,6 +42,7 @@ class GestionRoles extends Component
 
     public function editar($id)
     {
+        $this->authorize('roles.editar');
         $role = Role::findOrFail($id);
         $this->role_id = $role->id;
         $this->name = $role->name;
@@ -52,10 +58,15 @@ class GestionRoles extends Component
     #[On('eliminar-confirmado')]
     public function eliminar($id)
     {
+        $this->authorize('roles.eliminar');
         $role = Role::find($id);
-        if($role) {
+
+        // Validamos que exista y que NO sea el SUPER ADMIN
+        if($role && $role->name !== 'SUPER ADMIN') {
             $role->delete();
-            $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Rol eliminado']);
+            $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Rol eliminado correctamente']);
+        } else {
+            $this->dispatch('alerta', ['tipo' => 'error', 'mensaje' => 'No puedes eliminar este rol de sistema']);
         }
     }
 
@@ -69,6 +80,7 @@ class GestionRoles extends Component
 
     public function abrirPermisos($id)
     {
+        $this->authorize('roles.editar');
         $role = Role::findOrFail($id);
         $this->role_id = $role->id;
         $this->name = $role->name;
@@ -79,9 +91,10 @@ class GestionRoles extends Component
 
     public function guardarPermisos()
     {
+        $this->authorize('roles.editar');
         $role = Role::findOrFail($this->role_id);
         $role->syncPermissions($this->permisosAsignados);
-        
+
         $this->isPermissionModalOpen = false;
         $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Permisos actualizados']);
     }

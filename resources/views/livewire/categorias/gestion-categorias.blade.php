@@ -14,10 +14,11 @@
             <button wire:click="$set('search', '')" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">
                 Limpiar
             </button>
-
+            @can('categorias.crear')
             <button wire:click="toggleModal" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center shadow-lg">
                 <x-heroicon-o-plus-circle class="w-5 h-5 mr-2" /> Nueva Categoría
             </button>
+            @endcan
         </div>
     </div>
 
@@ -45,16 +46,18 @@
                     </td>
                     <td class="p-4 flex justify-center space-x-2">
 
-                        <button wire:click="editar({{  $cat->id}})" class="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
-                            <x-heroicon-o-pencil class="w-5 h-5" />
-                        </button>
+                        @can('categorias.editar')
+                            <button wire:click="editar({{ $cat->id }})" class="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+                                <x-heroicon-o-pencil class="w-5 h-5" />
+                            </button>
+                        @endcan
 
-                        <button wire:click="confirmarEliminar({{ $cat->id }})" 
-                            class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
-                            <x-heroicon-o-trash class="w-5 h-5" />
-                        </button>
+                        @can('categorias.eliminar')
+                            <button wire:click="confirmarEliminar({{ $cat->id }})" class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
+                                <x-heroicon-o-trash class="w-5 h-5" />
+                            </button>
+                        @endcan
 
-                        
                     </td>
                 </tr>
                 @endforeach
@@ -87,9 +90,9 @@
                         <div class="relative">
                             <span class="absolute left-3 top-2.5 text-gray-500">🏷️</span>
                             <input wire:model="nombre" wire:keydown.enter="guardar" type="text" placeholder="Nombre de la categoría"
-                                class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none">
+                                class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border {{ $errors->has('nombre') ? 'border-red-500' : 'border-gray-600' }} focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        @error('nombre') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <x-error-message for="nombre" />
                     </div>
 
                     <div>
@@ -97,9 +100,10 @@
                         <div class="relative">
                             <span class="absolute left-3 top-2.5 text-gray-500">📝</span>
                             <textarea wire:model="descripcion" placeholder="Descripción de la categoría"
-                                class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none h-24">
+                                    class="w-full pl-10 p-2.5 bg-gray-700 text-white rounded-lg border {{ $errors->has('descripcion') ? 'border-red-500' : 'border-gray-600' }} focus:ring-2 focus:ring-blue-500 outline-none h-24">
                             </textarea>
                         </div>
+                        <x-error-message for="descripcion" />
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4">

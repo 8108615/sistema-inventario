@@ -80,17 +80,27 @@ new class extends Component
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @can('usuarios.ver')
+            <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.index')" wire:navigate>
+                {{ __('Usuarios') }}
+            </x-responsive-nav-link>
+            @endcan
 
+            @can('roles.ver')
             <x-responsive-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')" wire:navigate>
                 {{ __('Roles') }}
             </x-responsive-nav-link>
-
+            @endcan
+            @can('categorias.ver')
             <x-responsive-nav-link :href="route('categorias.index')" :active="request()->routeIs('categorias.index')" wire:navigate>
                 {{ __('Categorías') }}
             </x-responsive-nav-link>
+            @endcan
+            @can('sucursales.ver')
             <x-responsive-nav-link :href="route('sucursales.index')" :active="request()->routeIs('sucursales.index')" wire:navigate>
                 {{ __('Sucursales') }}
             </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

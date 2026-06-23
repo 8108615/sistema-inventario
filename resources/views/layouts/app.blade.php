@@ -21,21 +21,34 @@
                     <x-heroicon-o-home class="w-5 h-5 mr-3" />
                     Panel
                 </a>
-                <a href="{{ route('roles.index') }}"
-                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('roles.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
-                    <x-heroicon-o-shield-check class="w-5 h-5 mr-3" />
-                    Roles
-                </a>
-                <a href="{{ route('categorias.index') }}"
-                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('categorias.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
-                    <x-heroicon-o-tag class="w-5 h-5 mr-3" />
-                    Categorías
-                </a>
-                <a href="{{ route('sucursales.index') }}"
-                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('sucursales.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
-                    <x-heroicon-o-building-office class="w-5 h-5 mr-3" />
-                    Sucursales
-                </a>
+                @can('usuarios.ver')
+                    <a href="{{ route('usuarios.index') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('usuarios.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-users class="w-5 h-5 mr-3" />
+                        Usuarios
+                    </a>
+                @endcan
+                @can('roles.ver')
+                    <a href="{{ route('roles.index') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('roles.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-shield-check class="w-5 h-5 mr-3" />
+                        Roles
+                    </a>
+                @endcan
+                @can('categorias.ver')
+                    <a href="{{ route('categorias.index') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('categorias.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-tag class="w-5 h-5 mr-3" />
+                        Categorías
+                    </a>
+                @endcan
+                @can('sucursales.ver')
+                    <a href="{{ route('sucursales.index') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('sucursales.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-building-office class="w-5 h-5 mr-3" />
+                        Sucursales
+                    </a>
+                @endcan
             </nav>
         </aside>
 
@@ -67,7 +80,7 @@
         window.addEventListener('confirmar-eliminacion', event => {
             Swal.fire({
                 // Cambiamos el título a algo genérico o dinámico
-                title: "¿Estás seguro?", 
+                title: "¿Estás seguro?",
                 text: "¿Deseas eliminar: " + event.detail[0].nombre + "?",
                 icon: "warning",
                 showCancelButton: true,

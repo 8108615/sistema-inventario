@@ -38,6 +38,11 @@ class LoginForm extends Form
             ]);
         }
 
+        // --- SEGURIDAD: REGENERAR SESIÓN ---
+        // Esto previene ataques de fijación de sesión al renovar el ID
+        // de la sesión actual tras un login exitoso.
+        request()->session()->regenerate();
+
         RateLimiter::clear($this->throttleKey());
     }
 

@@ -6,10 +6,11 @@ use App\Models\Categoria;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class GestionCategorias extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
     public $nombre, $descripcion, $categoria_id;
     public $isModalOpen = false;
     public $search = '';
@@ -23,12 +24,13 @@ class GestionCategorias extends Component
 
     public function guardar()
     {
+        $this->categoria_id ? $this->authorize('categorias.editar') : $this->authorize('categorias.crear');
         $this->validate([
-            'nombre' => 'required|min:3',
-            'descripcion' => 'nullable'
+        'nombre' => 'required|min:3',
+        'descripcion' => 'nullable'
         ]);
 
-        // Determinamos si es edición para el mensaje
+        // Determinamos si es edición
         $esEdicion = !empty($this->categoria_id);
 
         Categoria::updateOrCreate(['id' => $this->categoria_id], [
@@ -40,7 +42,6 @@ class GestionCategorias extends Component
         $mensaje = $esEdicion ? 'Categoría actualizada correctamente' : 'Categoría guardada correctamente';
 
         $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => $mensaje]);
-
         $this->reset(['nombre', 'descripcion', 'categoria_id']);
         $this->isModalOpen = false;
     }
@@ -58,6 +59,7 @@ class GestionCategorias extends Component
 
     public function editar($id)
     {
+        $this->authorize('categorias.editar');
         $categoria = Categoria::find($id);
         $this->categoria_id = $categoria->id;
         $this->nombre = $categoria->nombre;
@@ -68,6 +70,7 @@ class GestionCategorias extends Component
 
     public function confirmarEliminar($id)
     {
+        $this->authorize('categorias.eliminar');
         $categoria = Categoria::find($id);
         $this->dispatch('confirmar-eliminacion', [
             'id' => $id,
@@ -78,6 +81,7 @@ class GestionCategorias extends Component
     #[On('eliminar-confirmado')]
     public function eliminar($id)
     {
+        $this->authorize('categorias.eliminar');
         $categoria = Categoria::find($id);
         if($categoria) {
             $categoria->delete();
