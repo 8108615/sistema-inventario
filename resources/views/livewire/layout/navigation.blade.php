@@ -101,6 +101,17 @@ new class extends Component
                 {{ __('Sucursales') }}
             </x-responsive-nav-link>
             @endcan
+
+            
+            @can('proveedores.ver')
+            <x-responsive-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')" wire:navigate>
+                {{ __('Proveedores') }}
+            </x-responsive-nav-link>
+            @endcan
+
+            <x-responsive-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')" wire:navigate>
+                {{ __('Productos') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

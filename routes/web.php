@@ -2,9 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Categorias\GestionCategorias;
+use App\Livewire\Productos\CrearProducto;
+use App\Livewire\Productos\EditarProducto;
+use App\Livewire\Productos\GestionProductos;
+use App\Livewire\Productos\VerProducto;
 use App\Livewire\Sucursales\GestionSucursales;
 use App\Livewire\Roles\GestionRoles;
 use App\Livewire\Usuarios\GestionUsuarios;
+use App\Livewire\Proveedores\GestionProveedores;
+use App\Livewire\Productos\ListadoProductos;
 
 Route::view('/', 'welcome');
 
@@ -17,6 +23,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('sucursales', GestionSucursales::class)->name('sucursales.index')->middleware('can:sucursales.ver');
     Route::get('roles', GestionRoles::class)->name('roles.index')->middleware('can:roles.ver');
     Route::get('usuarios', GestionUsuarios::class)->name('usuarios.index')->middleware('can:usuarios.ver');
+    Route::get('proveedores', GestionProveedores::class)->name('proveedores.index')->middleware('can:proveedores.ver');
+
+    Route::get('/productos', ListadoProductos::class)->name('productos.index');
+    Route::get('/productos/crear', CrearProducto::class)->name('productos.crear');
+    Route::get('/productos/{producto}/editar', EditarProducto::class)->name('productos.editar');
+    Route::get('/productos/{producto}/ver', VerProducto::class)->name('productos.ver');
 });
 
 Route::middleware(['auth'])->group(function () {

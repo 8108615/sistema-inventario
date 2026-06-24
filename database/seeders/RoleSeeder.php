@@ -19,6 +19,7 @@ class RoleSeeder extends Seeder
             'usuarios.ver', 'usuarios.crear', 'usuarios.editar', 'usuarios.eliminar',
             'categorias.ver', 'categorias.crear', 'categorias.editar', 'categorias.eliminar',
             'sucursales.ver', 'sucursales.crear', 'sucursales.editar', 'sucursales.eliminar',
+            'proveedores.ver', 'proveedores.crear', 'proveedores.editar', 'proveedores.eliminar',
         ];
 
         foreach ($permisos as $p) {

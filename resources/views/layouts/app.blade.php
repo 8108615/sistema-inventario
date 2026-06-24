@@ -49,6 +49,22 @@
                         Sucursales
                     </a>
                 @endcan
+
+               @can('proveedores.ver')
+                    <a href="{{ route('proveedores.index') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('proveedores.index') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-truck class="w-5 h-5 mr-3" />
+                        Proveedores
+                    </a>
+                @endcan
+
+                <a href="{{ route('productos.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('productos.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-shopping-bag class="w-5 h-5 mr-3" />
+                    Productos
+                </a>
+
+
             </nav>
         </aside>
 
