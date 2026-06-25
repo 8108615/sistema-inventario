@@ -62,8 +62,13 @@
             </tbody>
         </table>
 
-        <div class="p-4 bg-gray-900 border-t border-gray-700">
-            {{ $proveedores->links() }}
+        <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-between items-center text-sm text-gray-400">
+            <div>
+                Mostrando {{ $proveedores->firstItem() }} a {{ $proveedores->lastItem() }} de {{ $proveedores->total() }} registros
+            </div>
+            <div>
+                {{ $proveedores->links() }}
+            </div>
         </div>
     </div>
 

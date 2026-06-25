@@ -95,4 +95,9 @@ class GestionProveedores extends Component
         Proveedor::find($id)->delete();
         $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Proveedor eliminado']);
     }
+    
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 }

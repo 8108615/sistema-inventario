@@ -6,6 +6,9 @@ use App\Models\Producto;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Storage;
+use App\Exports\ProductosExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ListadoProductos extends Component
 {
@@ -46,19 +49,42 @@ class ListadoProductos extends Component
     }
 
 
-    // 2. Ejecuta el borrado real
     public function delete($id)
     {
         $producto = Producto::find($id);
         if ($producto) {
-            // Borrar imagen del almacenamiento
             if ($producto->imagen) {
                 Storage::disk('public')->delete($producto->imagen);
             }
             $producto->delete();
 
-            // Disparamos alerta de éxito
-            $this->dispatch('alerta', tipo: 'success', mensaje: 'Producto eliminado correctamente');
+            // Guardamos el mensaje en la sesión
+            session()->flash('alerta_exito', 'Producto eliminado correctamente');
+
+            // Al recargar la página, app.blade.php detectará esta sesión
+            return redirect()->route('productos.index');
         }
+    }
+
+    public function exportarExcel()
+    {
+        return Excel::download(new ProductosExport, 'productos.xlsx');
+    }
+
+    public function exportarCsv()
+    {
+        return Excel::download(new ProductosExport, 'productos.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    public function exportarPdf()
+    {
+        ini_set('memory_limit', '512M'); // Aumentar memoria para este proceso
+        
+        $productos = \App\Models\Producto::with('categoria')->get();
+
+        $pdf = Pdf::loadView('pdf.productos', compact('productos'))
+                ->setPaper('a4', 'landscape'); // <--- Esto pone la hoja en horizontal
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'reporte_productos.pdf');
     }
 }

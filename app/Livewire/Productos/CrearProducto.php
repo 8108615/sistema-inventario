@@ -44,9 +44,12 @@ class CrearProducto extends Component
             'estado'          => $this->estado,
         ]);
 
-        // Disparamos el evento hacia tu layout app.blade.php
-        session()->flash('alerta_exito', 'Producto guardado correctamente');
+        $this->dispatch('alerta', [
+            'tipo' => 'success',
+            'mensaje' => 'Producto guardado correctamente'
+        ]);
 
+        // Y luego redireccionamos (el evento se disparará justo antes del cambio de página)
         return redirect()->route('productos.index');
     }
 

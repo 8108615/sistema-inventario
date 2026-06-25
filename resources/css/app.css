@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@media print {
+    /* Ocultamos elementos que no queremos imprimir */
+    aside,
+    header,
+    .no-print {
+        display: none !important;
+    }
+    /* Ajustamos el contenido principal para que ocupe toda la hoja */
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    /* Cambiamos el fondo oscuro a blanco para ahorrar tinta y que se lea bien */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    /* Ajuste de colores de texto para que sean legibles en papel */
+    .text-gray-400,
+    .text-gray-100,
+    .text-white {
+        color: #333 !important;
+    }
+}

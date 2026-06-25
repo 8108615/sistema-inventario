@@ -91,7 +91,7 @@
                 icon: event.detail[0].tipo,
                 title: event.detail[0].mensaje,
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000
             });
         });
 
@@ -112,5 +112,18 @@
             });
         });
     </script>
+
+    @if (session()->has('alerta_exito'))
+        <script>
+            // Este bloque se ejecuta cuando hay una redirección
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "{{ session('alerta_exito') }}",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        </script>
+    @endif
 </body>
 </html>

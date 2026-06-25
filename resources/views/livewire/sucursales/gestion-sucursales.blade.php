@@ -23,7 +23,8 @@
         <table class="min-w-full text-left text-sm text-gray-400">
             <thead class="bg-gray-900 text-white uppercase">
                 <tr>
-                    <th class="px-6 py-3">#</th> <th class="px-6 py-3">Nombre</th>
+                    <th class="px-6 py-3">#</th>
+                    <th class="px-6 py-3">Nombre</th>
                     <th class="px-6 py-3">Dirección</th>
                     <th class="px-6 py-3">Teléfono</th>
                     <th class="px-6 py-3 text-center">Acciones</th>
