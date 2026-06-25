@@ -69,3 +69,13 @@
         {{ $productos->links() }}
     </div>
 </div>
+
+@if (session()->has('alerta_exito'))
+    <script>
+        // Disparamos el evento que tu app.blade.php ya sabe escuchar
+        Livewire.dispatch('alerta', [{
+            tipo: 'success',
+            mensaje: '{{ session('alerta_exito') }}'
+        }]);
+    </script>
+@endif

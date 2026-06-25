@@ -6,22 +6,24 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class CrearProducto extends Component
 {
     use WithFileUploads;
 
     public $categoria_id, $codigo_producto, $codigo_barra, $nombre_producto, $descripcion;
-    public $precio_compra, $precio_venta, $stock_actual, $stock_minimo, $stock_maximo;
-    public $unidad_medida = 'unidad', $estado = true, $imagen;
+    public $precio_compra = 0, $precio_venta = 0, $stock_actual = 0, $stock_minimo = 0, $stock_maximo = 0;
+    public $unidad_medida = 'UNIDAD', $estado = true, $imagen;
 
     public function store()
     {
         $this->validate([
-            'categoria_id' => 'required',
+            'categoria_id'    => 'required',
             'codigo_producto' => 'required',
             'nombre_producto' => 'required',
-            'imagen' => 'required|image|max:1024',
+            'stock_actual'    => 'required|numeric|min:0',
+            'imagen'          => 'required|image|max:1024',
         ]);
 
         $path = $this->imagen->store('productos', 'public');
@@ -33,22 +35,35 @@ class CrearProducto extends Component
             'nombre_producto' => $this->nombre_producto,
             'descripcion'     => $this->descripcion,
             'imagen'          => $path,
-            'precio_compra'   => $this->precio_compra,
-            'precio_venta'    => $this->precio_venta,
-            'stock_actual'    => $this->stock_actual,
-            'stock_minimo'    => $this->stock_minimo,
-            'stock_maximo'    => $this->stock_maximo,
+            'precio_compra'   => $this->precio_compra ?? 0,
+            'precio_venta'    => $this->precio_venta ?? 0,
+            'stock_actual'    => $this->stock_actual ?? 0,
+            'stock_minimo'    => $this->stock_minimo ?? 0,
+            'stock_maximo'    => $this->stock_maximo ?? 0,
             'unidad_medida'   => $this->unidad_medida,
             'estado'          => $this->estado,
         ]);
+
+        // Disparamos el evento hacia tu layout app.blade.php
+        session()->flash('alerta_exito', 'Producto guardado correctamente');
 
         return redirect()->route('productos.index');
     }
 
     public function render()
     {
+        $generator = new BarcodeGeneratorPNG();
+        $barcodeImage = null;
+
+        if ($this->codigo_barra) {
+            // Genera el código en formato EAN13 o CODE128
+            // Para EAN13 el código debe tener 12 o 13 dígitos
+            $barcodeImage = base64_encode($generator->getBarcode($this->codigo_barra, $generator::TYPE_CODE_128));
+        }
+
         return view('livewire.productos.crear-producto', [
+            'barcodeImage' => $barcodeImage,
             'categorias' => Categoria::all()
-        ])->layout('layouts.app');
+        ]);
     }
 }

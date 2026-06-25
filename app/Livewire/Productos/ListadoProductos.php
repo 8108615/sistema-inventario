@@ -5,6 +5,7 @@ namespace App\Livewire\Productos;
 use App\Models\Producto;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Storage;
 
 class ListadoProductos extends Component
 {
@@ -12,9 +13,12 @@ class ListadoProductos extends Component
 
     public $search = '';
 
+    // Escucha el evento que viene desde SweetAlert
+    protected $listeners = ['eliminar-confirmado' => 'delete'];
+
     public function updatingSearch()
     {
-        $this->resetPage(); // Resetear a la página 1 al buscar
+        $this->resetPage();
     }
 
     public function render()
@@ -28,14 +32,33 @@ class ListadoProductos extends Component
             ->layout('layouts.app');
     }
 
+    // 1. Dispara el SweetAlert de confirmación
     public function confirmarEliminar($id)
     {
         $producto = Producto::find($id);
         if ($producto) {
-            $producto->delete();
-            // Opcional: podrías agregar un mensaje de éxito aquí
+            // Enviamos el ID y el NOMBRE para que el script de SweetAlert pueda mostrarlo
+            $this->dispatch('confirmar-eliminacion', [
+                'id' => $id,
+                'nombre' => $producto->nombre_producto
+            ]);
         }
     }
 
 
+    // 2. Ejecuta el borrado real
+    public function delete($id)
+    {
+        $producto = Producto::find($id);
+        if ($producto) {
+            // Borrar imagen del almacenamiento
+            if ($producto->imagen) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
+            $producto->delete();
+
+            // Disparamos alerta de éxito
+            $this->dispatch('alerta', tipo: 'success', mensaje: 'Producto eliminado correctamente');
+        }
+    }
 }

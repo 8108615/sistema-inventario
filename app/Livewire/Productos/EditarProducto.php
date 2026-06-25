@@ -6,6 +6,8 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class EditarProducto extends Component
 {
@@ -35,23 +37,51 @@ class EditarProducto extends Component
 
     public function update()
     {
-        $data = $this->validate([
+        $this->validate([
             'categoria_id' => 'required',
             'nombre_producto' => 'required',
+            'nueva_imagen' => 'nullable|image|max:1024',
         ]);
 
+        $datos = [
+            'categoria_id' => $this->categoria_id,
+            'codigo_producto' => $this->codigo_producto,
+            'codigo_barra' => $this->codigo_barra,
+            'nombre_producto' => $this->nombre_producto,
+            'descripcion' => $this->descripcion,
+            'precio_compra' => $this->precio_compra,
+            'precio_venta' => $this->precio_venta,
+            'stock_actual' => $this->stock_actual,
+            'stock_minimo' => $this->stock_minimo,
+            'stock_maximo' => $this->stock_maximo,
+            'unidad_medida' => $this->unidad_medida,
+            'estado' => $this->estado,
+        ];
+
         if ($this->nueva_imagen) {
-            $data['imagen'] = $this->nueva_imagen->store('productos', 'public');
+            if ($this->imagen) {
+                Storage::disk('public')->delete($this->imagen);
+            }
+            $datos['imagen'] = $this->nueva_imagen->store('productos', 'public');
         }
 
-        $this->producto->update($data);
+        $this->producto->update($datos);
+
+        session()->flash('alerta_exito', 'Producto actualizado correctamente');
         return redirect()->route('productos.index');
     }
 
     public function render()
     {
+        $generator = new BarcodeGeneratorPNG();
+        $barcodeImage = null;
+        if ($this->codigo_barra) {
+            $barcodeImage = base64_encode($generator->getBarcode($this->codigo_barra, $generator::TYPE_CODE_128));
+        }
+
         return view('livewire.productos.editar-producto', [
-            'categorias' => Categoria::all()
+            'categorias' => Categoria::all(),
+            'barcodeImage' => $barcodeImage
         ])->layout('layouts.app');
     }
 }
