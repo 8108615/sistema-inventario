@@ -102,7 +102,7 @@ new class extends Component
             </x-responsive-nav-link>
             @endcan
 
-            
+
             @can('proveedores.ver')
             <x-responsive-nav-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.index')" wire:navigate>
                 {{ __('Proveedores') }}
@@ -111,6 +111,10 @@ new class extends Component
 
             <x-responsive-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')" wire:navigate>
                 {{ __('Productos') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('lotes.index')" :active="request()->routeIs('lotes.*')" wire:navigate>
+                {{ __('Lotes') }}
             </x-responsive-nav-link>
         </div>
 

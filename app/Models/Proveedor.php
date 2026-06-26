@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proveedor extends Model
 {
@@ -11,8 +12,13 @@ class Proveedor extends Model
     protected $fillable = [
         'nombre', 'telefono', 'email', 'direccion', 'empresa', 'notas', 'estado'
     ];
-    
+
     protected $casts = [
-    'estado' => 'boolean',
-];
+        'estado' => 'boolean',
+    ];
+
+    public function lotes(): HasMany
+    {
+        return $this->hasMany(Lote::class);
+    }
 }

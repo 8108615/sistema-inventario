@@ -66,6 +66,14 @@
                     Productos
                 </a>
 
+                <a href="{{ route('lotes.index') }}"
+                class="flex items-center px-6 py-3 transition {{ request()->routeIs('lotes.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                <x-heroicon-o-archive-box-arrow-down class="w-5 h-5 mr-3" />
+                Lotes
+            </a>
+
+
+
 
             </nav>
         </aside>
