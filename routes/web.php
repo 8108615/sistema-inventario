@@ -14,12 +14,14 @@ use App\Livewire\Productos\ListadoProductos;
 use App\Livewire\Lotes\GestionLotes;
 use App\Livewire\Lotes\RegistroLotes;
 use App\Livewire\Lotes\EditarLote;
+use App\Livewire\Dashboard\Panel;
+use App\Livewire\Compras\RegistrarCompra;
 
 Route::view('/', 'welcome');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', Panel::class)->name('dashboard');
 
     // Gestión del Sistema de Inventario
     Route::get('categorias', GestionCategorias::class)->name('categorias.index')->middleware('can:categorias.ver');
@@ -38,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('lotes', GestionLotes::class)->name('lotes.index');
     Route::get('lotes/registrar', RegistroLotes::class)->name('lotes.registrar');
     Route::get('/lotes/{lote}/editar', EditarLote::class)->name('lotes.editar');
+
+    Route::get('/compras/registrar', RegistrarCompra::class)->name('compras.registrar');
 
 });
 

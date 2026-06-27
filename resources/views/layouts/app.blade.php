@@ -67,10 +67,15 @@
                 </a>
 
                 <a href="{{ route('lotes.index') }}"
-                class="flex items-center px-6 py-3 transition {{ request()->routeIs('lotes.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
-                <x-heroicon-o-archive-box-arrow-down class="w-5 h-5 mr-3" />
-                Lotes
-            </a>
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('lotes.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-archive-box-arrow-down class="w-5 h-5 mr-3" />
+                    Lotes
+                </a>
+
+                <a href="{{ route('compras.registrar') }}"
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-600 {{ request()->routeIs('compras.registrar') ? 'bg-blue-600' : '' }}">
+                        Registrar Compra
+                </a>
 
 
 
