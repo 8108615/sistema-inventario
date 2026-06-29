@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('proveedor_id')->constrained('proveedores');
             $table->foreignId('sucursal_id')->constrained('sucursals');
-            $table->string('numero_factura');
+            $table->string('tipo_comprobante', 20)->default('Factura');
             $table->decimal('total', 10, 2);
             $table->string('estado'); // 'recibida', 'pendiente'
             $table->text('observaciones')->nullable(); // <-- Tu sugerencia

@@ -8,6 +8,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('styles')
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="font-sans antialiased bg-gray-900 text-gray-100">
 
@@ -72,9 +75,22 @@
                     Lotes
                 </a>
 
-                <a href="{{ route('compras.registrar') }}"
-                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-600 {{ request()->routeIs('compras.registrar') ? 'bg-blue-600' : '' }}">
-                        Registrar Compra
+                <a href="{{ route('clientes.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('clientes.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-user-group class="w-5 h-5 mr-3" />
+                    Clientes
+                </a>
+
+                <a href="{{ route('compras.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('compras.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
+                    Compras
+                </a>
+
+                <a href="{{ route('cajas.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('cajas.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-currency-dollar class="w-5 h-5 mr-3" />
+                    Cajas
                 </a>
 
 
@@ -124,6 +140,22 @@
                 }
             });
         });
+
+        window.addEventListener('confirmar-accion', event => {
+            Swal.fire({
+                title: event.detail[0].titulo,
+                text: event.detail[0].mensaje,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: event.detail[0].colorConfirm,
+                cancelButtonColor: "#6b7280",
+                confirmButtonText: event.detail[0].textoConfirm
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch(event.detail[0].evento, { id: event.detail[0].id });
+                }
+            });
+        });
     </script>
 
     @if (session()->has('alerta_exito'))
@@ -138,5 +170,7 @@
             });
         </script>
     @endif
+
+
 </body>
 </html>
