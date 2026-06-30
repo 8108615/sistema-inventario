@@ -12,11 +12,50 @@ class ListarVentas extends Component
 
     public $search = '';
 
+    public $ventaSeleccionada;
+    public $verDetalleModal = false;
+
+    public function limpiar()
+    {
+        $this->reset('search');
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage(); // Reinicia la paginación al buscar
+    }
+
+
+    public function verDetalle($ventaId)
+    {
+        // Cargamos la venta con sus relaciones y el detalle (productos)
+        $this->ventaSeleccionada = \App\Models\Venta::with(['cliente', 'user', 'caja', 'detalles.producto'])
+            ->find($ventaId);
+
+        $this->verDetalleModal = true;
+    }
+
+    public function cerrarModal()
+    {
+        $this->verDetalleModal = false;
+        $this->ventaSeleccionada = null;
+    }
+
     public function render()
     {
-        // Cargamos las relaciones para poder acceder a los nombres
         $ventas = Venta::with(['cliente', 'user', 'caja'])
-            ->where('numero_comprobante', 'like', '%' . $this->search . '%')
+            ->where(function ($query) {
+                $query->where('numero_comprobante', 'like', '%' . $this->search . '%')
+                    ->orWhere('fecha_hora', 'like', '%' . $this->search . '%')
+                    // Buscar por nombre de cliente
+                    ->orWhereHas('cliente', function ($q) {
+                        $q->where('nombre_cliente', 'like', '%' . $this->search . '%');
+                    })
+                    // Buscar por nombre de usuario
+                    ->orWhereHas('user', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%');
+                    });
+            })
             ->latest()
             ->paginate(10);
 

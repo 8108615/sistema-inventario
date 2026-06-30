@@ -25,6 +25,7 @@ use App\Livewire\Cajas\GestionarCaja;
 use App\Livewire\Cajas\DetalleCaja;
 use App\Livewire\Ventas\ListarVentas;
 use App\Livewire\Ventas\RegistrarVenta;
+use App\Livewire\Ventas\EditarVenta;
 
 
 Route::view('/', 'welcome');
@@ -68,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/ventas', ListarVentas::class)->name('ventas.index');
     Route::get('/ventas/registrar', RegistrarVenta::class)->name('ventas.registrar');
+    Route::get('/ventas/{id}/editar', EditarVenta::class)->name('ventas.editar');
 });
 
 

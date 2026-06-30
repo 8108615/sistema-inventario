@@ -15,7 +15,8 @@
     <div class="bg-gray-800 p-4 rounded-t-lg border-b border-gray-700 flex justify-between items-center">
 
         <div class="flex items-center space-x-2">
-            <input wire:model.live="search" type="text" placeholder="Buscar producto..." class="bg-gray-700 text-white border-none rounded px-3 py-1 text-sm">
+            <input wire:model.live="search" type="text" placeholder="Buscar..."
+            class="bg-gray-700 text-white border-none rounded px-3 py-1 text-sm">
             <button wire:click="$set('search', '')" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm">Limpiar</button>
         </div>
     </div>
