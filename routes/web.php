@@ -23,6 +23,8 @@ use App\Livewire\Clientes\CrearCliente;
 use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Cajas\GestionarCaja;
 use App\Livewire\Cajas\DetalleCaja;
+use App\Livewire\Ventas\ListarVentas;
+use App\Livewire\Ventas\RegistrarVenta;
 
 
 Route::view('/', 'welcome');
@@ -64,9 +66,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/clientes/crear', CrearCliente::class)->name('clientes.create');
     Route::get('/clientes/{id}/editar', EditarCliente::class)->name('clientes.edit');
 
-
-
+    Route::get('/ventas', ListarVentas::class)->name('ventas.index');
+    Route::get('/ventas/registrar', RegistrarVenta::class)->name('ventas.registrar');
 });
+
+
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::view('profile', 'profile')->name('profile');

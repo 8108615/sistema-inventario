@@ -93,6 +93,12 @@
                     Cajas
                 </a>
 
+                <a href="{{ route('ventas.index') }}"
+                    class="flex items-center px-6 py-3 transition {{ request()->routeIs('ventas.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
+                    Ventas
+                </a>
+
 
 
 
