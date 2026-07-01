@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Compra;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\File;
 
 class ListarCompras extends Component
 {
@@ -57,7 +58,17 @@ class ListarCompras extends Component
 
     public function render()
     {
-        // Cargamos la relación 'detalles' y 'detalles.producto' para evitar consultas N+1
+        $empresa = \App\Models\Empresa::first();
+        $simboloMoneda = '$';
+
+        $path = public_path('divisas.json');
+        if (File::exists($path)) {
+            $divisas = json_decode(File::get($path), true);
+            if ($empresa && isset($divisas[$empresa->divisa])) {
+                $simboloMoneda = $divisas[$empresa->divisa]['symbol'];
+            }
+        }
+
         $compras = Compra::with(['proveedor', 'sucursal', 'detalles.producto'])
             ->whereHas('proveedor', function($query) {
                 $query->where('nombre', 'like', '%' . $this->search . '%');
@@ -66,7 +77,8 @@ class ListarCompras extends Component
             ->paginate(10);
 
         return view('livewire.compras.listar-compras', [
-            'compras' => $compras
+            'compras' => $compras,
+            'simboloMoneda' => $simboloMoneda // Pasamos la variable a la vista
         ]);
     }
 }

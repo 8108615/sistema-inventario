@@ -48,8 +48,8 @@
                     <td class="px-6 py-4">{{ date('d/m/Y', strtotime($lote->fecha_entrada)) }}</td>
                     <td class="px-6 py-4">{{ $lote->fecha_vencimiento ? date('d/m/Y', strtotime($lote->fecha_vencimiento)) : '-' }}</td>
                     <td class="px-6 py-4 font-bold text-blue-400">{{ $lote->producto->stock_actual ?? 0 }}</td>
-                    <td class="px-6 py-4">${{ number_format($lote->precio_compra, 2) }}</td>
-                    <td class="px-6 py-4">${{ number_format($lote->precio_venta, 2) }}</td>
+                    <td class="px-6 py-4">{{ $simboloMoneda }}{{ number_format($lote->precio_compra, 2) }}</td>
+                    <td class="px-6 py-4">{{ $simboloMoneda }}{{ number_format($lote->precio_venta, 2) }}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 rounded text-xs {{ $lote->estado ? 'bg-green-600' : 'bg-red-600' }}">
                             {{ $lote->estado ? 'ACTIVO' : 'INACTIVO' }}
@@ -110,8 +110,8 @@
                         <p><strong>Cant. Inicial (Ingresada):</strong> {{ $loteSeleccionado->cantidad_inicial }}</p>
                         <p><strong>Cant. Actual (Lote):</strong> {{ $loteSeleccionado->cantidad_actual }}</p>
                         <p><strong>Stock Total (Producto):</strong> {{ $loteSeleccionado->producto->stock_actual ?? 0 }}</p>
-                        <p><strong>Precio Compra:</strong> ${{ number_format($loteSeleccionado->precio_compra, 2) }}</p>
-                        <p><strong>Precio Venta:</strong> ${{ number_format($loteSeleccionado->precio_venta, 2) }}</p>
+                        <p><strong>Precio Compra:</strong> {{ $simboloMoneda }}{{ number_format($loteSeleccionado->precio_compra, 2) }}</p>
+                        <p><strong>Precio Venta:</strong> {{ $simboloMoneda }}{{ number_format($loteSeleccionado->precio_venta, 2) }}</p>
                     </div>
                 </div>
 

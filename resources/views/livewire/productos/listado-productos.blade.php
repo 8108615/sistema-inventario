@@ -61,7 +61,7 @@
                     </td>
                     <td class="px-4 py-3">{{ $p->stock_actual }}</td>
                     <td class="px-4 py-3">{{ $p->unidad }}</td>
-                    <td class="px-4 py-3">${{ number_format($p->precio_venta, 2) }}</td>
+                    <td class="px-4 py-3">{{ $simboloMoneda }} {{ number_format($p->precio_venta, 2) }}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 rounded text-xs {{ $p->estado ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' }}">
                             {{ $p->estado ? 'ACTIVO' : 'INACTIVO' }}

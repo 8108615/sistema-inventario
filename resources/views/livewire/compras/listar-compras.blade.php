@@ -41,7 +41,7 @@
                         @endforeach
                     </td>
                     <td class="px-4 py-3">{{ $compra->tipo_comprobante }}</td>
-                    <td class="px-4 py-3">{{ number_format($compra->total, 2) }}</td>
+                    <td class="px-4 py-3">{{ $simboloMoneda }}{{ number_format($compra->total, 2) }}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 rounded {{ $compra->estado == 'recibida' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300' }}">
                             {{ ucfirst($compra->estado) }}

@@ -57,16 +57,21 @@ class EditarVenta extends Component
 
     public function actualizarVenta()
     {
-        DB::transaction(function () {
+        // 1. Calculamos los totales fuera de la transacción para tenerlos disponibles
+        $subtotal_calculado = collect($this->carrito)->sum('subtotal');
+        $impuesto_calculado = $this->con_impuesto ? ($subtotal_calculado * 0.13) : 0;
+        $total_calculado = $subtotal_calculado + $impuesto_calculado;
+
+        DB::transaction(function () use ($subtotal_calculado, $impuesto_calculado, $total_calculado) {
             // 1. Devolver stock anterior
             foreach ($this->venta->detalles as $d) {
                 Producto::find($d->producto_id)->increment('stock_actual', $d->cantidad);
             }
+
             // 2. Eliminar detalles antiguos
             DetalleVenta::where('venta_id', $this->venta->id)->delete();
 
             // 3. Guardar nuevos detalles y descontar stock
-            $subtotal = 0;
             foreach ($this->carrito as $item) {
                 DetalleVenta::create([
                     'venta_id' => $this->venta->id,
@@ -76,20 +81,22 @@ class EditarVenta extends Component
                     'subtotal' => $item['subtotal']
                 ]);
                 Producto::find($item['producto_id'])->decrement('stock_actual', $item['cantidad']);
-                $subtotal += $item['subtotal'];
             }
 
+            // 4. Actualizar la venta usando las variables calculadas
             $this->venta->update([
                 'cliente_id' => $this->cliente_id,
                 'tipo_comprobante' => $this->tipo_comprobante,
                 'metodo_pago' => $this->metodo_pago,
-                'subtotal' => $subtotal,
-                'impuesto' => $impuesto,
-                'total' => $total,
-                'monto_recibido' => $this->monto_recibido, // Guardamos el valor actualizado
-                'vuelto_entregado' => $this->monto_recibido - $total,
+                'subtotal' => $subtotal_calculado,
+                'impuesto' => $impuesto_calculado,
+                'total' => $total_calculado,
+                'monto_recibido' => $this->monto_recibido,
+                'vuelto_entregado' => $this->monto_recibido - $total_calculado,
             ]);
         });
+
+        session()->flash('alerta_exito', 'Venta actualizada con éxito');
 
         return redirect()->route('ventas.index');
     }

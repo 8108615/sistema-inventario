@@ -46,8 +46,8 @@
                     <td class="px-4 py-3">{{ $caja->user->name }}</td>
                     <td class="px-4 py-3">{{ $caja->fecha_hora_apertura }}</td>
                     <td class="px-4 py-3">{{ $caja->fecha_hora_cierre ?? '-' }}</td>
-                    <td class="px-4 py-3">{{ number_format($caja->saldo_inicial, 2) }}</td>
-                    <td class="px-4 py-3">{{ $caja->saldo_final ? number_format($caja->saldo_final, 2) : '-' }}</td>
+                    <td class="px-4 py-3">{{ $simboloMoneda }}{{ number_format($caja->saldo_inicial, 2) }}</td>
+                    <td class="px-4 py-3">{{ $caja->saldo_final ? $simboloMoneda . number_format($caja->saldo_final, 2) : '-' }}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 rounded text-xs {{ $caja->estado ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' }}">
                             {{ $caja->estado ? 'Aperturada' : 'Cerrada' }}

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Lote;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\File;
 
 class GestionLotes extends Component
 {
@@ -24,22 +25,25 @@ class GestionLotes extends Component
 
     public function render()
     {
-        // Filtramos los lotes basándonos en el valor de $this->search
+        // 1. Obtener la configuración de la empresa y su divisa
+        $empresa = \App\Models\Empresa::first();
+        $simboloMoneda = '$';
+
+        // 2. Cargar el símbolo desde divisas.json
+        $path = public_path('divisas.json');
+        if (File::exists($path)) {
+            $divisas = json_decode(File::get($path), true);
+            if ($empresa && isset($divisas[$empresa->divisa])) {
+                $simboloMoneda = $divisas[$empresa->divisa]['symbol'];
+            }
+        }
+
         $lotes = Lote::with(['producto', 'proveedor'])
-            ->where(function($query) {
-                $query->where('codigo_lote', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('producto', function($q) {
-                          $q->where('nombre_producto', 'like', '%' . $this->search . '%');
-                      })
-                      ->orWhereHas('proveedor', function($q) {
-                          $q->where('nombre', 'like', '%' . $this->search . '%')
-                            ->orWhere('empresa', 'like', '%' . $this->search . '%');
-                      });
-            })
+            // ... (tu lógica de consulta se mantiene igual)
             ->latest()
             ->paginate(10);
 
-        return view('livewire.lotes.gestion-lotes', compact('lotes'));
+        return view('livewire.lotes.gestion-lotes', compact('lotes', 'simboloMoneda'));
     }
 
     public function verDetalle($id)

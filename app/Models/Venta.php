@@ -28,6 +28,6 @@ class Venta extends Model
 
     public function detalles(): HasMany
     {
-        return $this->hasMany(DetalleVenta::class);
+        return $this->hasMany(DetalleVenta::class, 'venta_id');
     }
 }

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Exports\ProductosExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Empresa;
+use Illuminate\Support\Facades\File;
 
 class ListadoProductos extends Component
 {
@@ -26,12 +28,26 @@ class ListadoProductos extends Component
 
     public function render()
     {
+        $empresa = \App\Models\Empresa::first();
+        $simboloMoneda = '$'; // Valor por defecto si no se encuentra nada
+
+        $path = public_path('divisas.json');
+        if (File::exists($path)) {
+            $divisas = json_decode(File::get($path), true);
+
+            // Verificamos si la empresa tiene una divisa seleccionada y si existe en el JSON
+            if ($empresa && isset($divisas[$empresa->divisa])) {
+                // Accedemos al campo 'symbol' del JSON
+                $simboloMoneda = $divisas[$empresa->divisa]['symbol'];
+            }
+        }
+
         $productos = Producto::where('nombre_producto', 'like', '%' . $this->search . '%')
             ->orWhere('codigo_producto', 'like', '%' . $this->search . '%')
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        return view('livewire.productos.listado-productos', compact('productos'))
+        return view('livewire.productos.listado-productos', compact('productos', 'simboloMoneda'))
             ->layout('layouts.app');
     }
 
@@ -79,7 +95,7 @@ class ListadoProductos extends Component
     public function exportarPdf()
     {
         ini_set('memory_limit', '512M'); // Aumentar memoria para este proceso
-        
+
         $productos = \App\Models\Producto::with('categoria')->get();
 
         $pdf = Pdf::loadView('pdf.productos', compact('productos'))

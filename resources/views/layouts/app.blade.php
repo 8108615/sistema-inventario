@@ -99,6 +99,15 @@
                     Ventas
                 </a>
 
+                <div class="pt-4 mt-4 border-t border-gray-800">
+                    <p class="px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Configuración</p>
+                    <a href="{{ route('empresa.gestion') }}"
+                        class="flex items-center px-6 py-3 transition {{ request()->routeIs('empresa.gestion') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                        <x-heroicon-o-cog-6-tooth class="w-5 h-5 mr-3" />
+                        Empresa
+                    </a>
+                </div>
+
 
 
 

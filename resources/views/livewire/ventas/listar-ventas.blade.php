@@ -54,8 +54,8 @@
                         <td class="px-4 py-3">{{ $venta->caja->nombre ?? 'Caja '.$venta->caja_id }}</td>
                         <td class="px-4 py-3">{{ $venta->tipo_comprobante }}</td>
                         <td class="px-4 py-3">{{ $venta->metodo_pago }}</td>
-                        <td class="px-4 py-3">{{ number_format($venta->impuesto, 2) }}</td>
-                        <td class="px-4 py-3 font-bold text-blue-400">{{ number_format($venta->total, 2) }}</td>
+                        <td class="px-4 py-3">{{ $simboloMoneda }}{{ number_format($venta->impuesto, 2) }}</td>
+                        <td class="px-4 py-3 font-bold text-blue-400">{{ $simboloMoneda }}{{ number_format($venta->total, 2) }}</td>
                         <td class="px-4 py-3 flex justify-center space-x-1">
                             <button wire:click="verDetalle({{ $venta->id }})"
                                 class="bg-blue-500 hover:bg-blue-400 text-white p-2 rounded">
@@ -65,7 +65,9 @@
                                 class="bg-green-600 hover:bg-green-500 text-white p-2 rounded">
                                     <x-heroicon-o-pencil class="w-4 h-4"/>
                                 </a>
-                            <button wire:click="confirmarEliminar({{ $venta->id }})" class="bg-red-600 hover:bg-red-500 text-white p-2 rounded">
+                            <button
+                                wire:click="confirmarEliminacion({{ $venta->id }}, '{{ $venta->numero_comprobante }}')"
+                                class="bg-red-600 p-2 rounded text-white hover:bg-red-700">
                                 <x-heroicon-o-trash class="w-4 h-4"/>
                             </button>
                         </td>
@@ -85,21 +87,20 @@
         {{ $ventas->links() }}
     </div>
 
+    <!-- Modal de Detalles -->
     @if($verDetalleModal && $ventaSeleccionada)
         <div class="fixed inset-0 bg-gray-900/75 flex items-center justify-center z-50">
             <div class="bg-gray-800 rounded-lg shadow-xl w-3/4 max-h-[80vh] overflow-y-auto border border-gray-700">
-                <!-- Cabecera del modal -->
                 <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-900">
                     <h3 class="text-white font-bold">Detalles de Venta: {{ $ventaSeleccionada->numero_comprobante }}</h3>
                     <button wire:click="cerrarModal" class="text-gray-400 hover:text-white">✕</button>
                 </div>
 
-                <!-- Contenido del modal -->
                 <div class="p-6 text-gray-300">
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <p><strong>Cliente:</strong> {{ $ventaSeleccionada->cliente->nombre_cliente ?? 'N/A' }}</p>
                         <p><strong>Fecha:</strong> {{ $ventaSeleccionada->fecha_hora }}</p>
-                        <p><strong>Total:</strong> ${{ number_format($ventaSeleccionada->total, 2) }}</p>
+                        <p><strong>Total:</strong> {{ $simboloMoneda }}{{ number_format($ventaSeleccionada->total, 2) }}</p>
                     </div>
 
                     <table class="w-full text-left">
@@ -116,8 +117,8 @@
                                 <tr class="border-b border-gray-700">
                                     <td class="py-2">{{ $detalle->producto->nombre_producto ?? 'N/A' }}</td>
                                     <td class="py-2">{{ $detalle->cantidad }}</td>
-                                    <td class="py-2">{{ number_format($detalle->precio_unitario, 2) }}</td>
-                                    <td class="py-2">{{ number_format($detalle->subtotal, 2) }}</td>
+                                    <td class="py-2">{{ $simboloMoneda }}{{ number_format($detalle->precio_unitario, 2) }}</td>
+                                    <td class="py-2">{{ $simboloMoneda }}{{ number_format($detalle->subtotal, 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

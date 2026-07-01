@@ -4,7 +4,10 @@ namespace App\Livewire\Ventas;
 
 use Livewire\Component;
 use App\Models\Venta;
+use App\Models\Producto;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\File;
 
 class ListarVentas extends Component
 {
@@ -43,15 +46,25 @@ class ListarVentas extends Component
 
     public function render()
     {
+        // Lógica para obtener el símbolo de moneda
+        $empresa = \App\Models\Empresa::first();
+        $simboloMoneda = '$';
+
+        $path = public_path('divisas.json');
+        if (File::exists($path)) {
+            $divisas = json_decode(File::get($path), true);
+            if ($empresa && isset($divisas[$empresa->divisa])) {
+                $simboloMoneda = $divisas[$empresa->divisa]['symbol'];
+            }
+        }
+
         $ventas = Venta::with(['cliente', 'user', 'caja'])
             ->where(function ($query) {
                 $query->where('numero_comprobante', 'like', '%' . $this->search . '%')
                     ->orWhere('fecha_hora', 'like', '%' . $this->search . '%')
-                    // Buscar por nombre de cliente
                     ->orWhereHas('cliente', function ($q) {
                         $q->where('nombre_cliente', 'like', '%' . $this->search . '%');
                     })
-                    // Buscar por nombre de usuario
                     ->orWhereHas('user', function ($q) {
                         $q->where('name', 'like', '%' . $this->search . '%');
                     });
@@ -59,7 +72,10 @@ class ListarVentas extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.ventas.listar-ventas', compact('ventas'));
+        return view('livewire.ventas.listar-ventas', [
+            'ventas' => $ventas,
+            'simboloMoneda' => $simboloMoneda
+        ]);
     }
 
     public function verificarCajaYRedirigir()
@@ -77,6 +93,39 @@ class ListarVentas extends Component
             ]);
         } else {
             return redirect()->route('ventas.registrar');
+        }
+    }
+
+    public function confirmarEliminacion($id, $numero)
+    {
+        $this->dispatch('confirmar-eliminacion', [
+            'id' => $id,
+            'nombre' => 'la Venta Nro. ' . $numero // Nombre para el mensaje de confirmación
+        ]);
+    }
+
+    #[On('eliminar-confirmado')]
+    public function destroy($id)
+    {
+        $venta = Venta::with('detalles')->find($id);
+
+        if ($venta) {
+            // 1. Revertir el stock: al eliminar una venta, los productos regresan al inventario
+            foreach ($venta->detalles as $detalle) {
+                $producto = Producto::find($detalle->producto_id);
+                if ($producto) {
+                    $producto->increment('stock_actual', $detalle->cantidad);
+                }
+            }
+
+            // 2. Eliminar detalles y la cabecera
+            $venta->detalles()->delete();
+            $venta->delete();
+
+            $this->dispatch('alerta', [
+                'tipo' => 'success',
+                'mensaje' => 'Venta eliminada y stock actualizado correctamente'
+            ]);
         }
     }
 

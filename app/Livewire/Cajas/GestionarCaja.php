@@ -7,6 +7,7 @@ use App\Models\Caja;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\File;
 
 class GestionarCaja extends Component
 {
@@ -54,7 +55,18 @@ class GestionarCaja extends Component
 
     public function render()
     {
-        // Consulta filtrada por nombre de usuario o nombre de caja
+        // 1. Lógica para obtener el símbolo
+        $empresa = \App\Models\Empresa::first();
+        $simboloMoneda = '$';
+
+        $path = public_path('divisas.json');
+        if (File::exists($path)) {
+            $divisas = json_decode(File::get($path), true);
+            if ($empresa && isset($divisas[$empresa->divisa])) {
+                $simboloMoneda = $divisas[$empresa->divisa]['symbol'];
+            }
+        }
+
         $cajas = Caja::with('user')
             ->whereHas('user', function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
@@ -62,6 +74,9 @@ class GestionarCaja extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.cajas.gestionar-caja', compact('cajas'));
+        return view('livewire.cajas.gestionar-caja', [
+            'cajas' => $cajas,
+            'simboloMoneda' => $simboloMoneda // Pasamos la variable
+        ]);
     }
 }
