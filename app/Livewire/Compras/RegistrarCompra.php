@@ -18,14 +18,14 @@ class RegistrarCompra extends Component
     // Propiedad de Finalización
     public $sucursal_id;
 
-    // ... el resto de tus propiedades ...
+
 
     public function crearCabecera()
     {
         $this->validate([
             'proveedor_id'     => 'required',
-            'fecha_compra'     => 'required',
-            'tipo_comprobante' => 'required', // Ahora sí funcionará porque la variable existe
+            'fecha_compra'     => 'required|date',
+            'tipo_comprobante' => 'required',
         ]);
 
         $compra = Compra::create([
@@ -34,7 +34,7 @@ class RegistrarCompra extends Component
             'fecha_compra'     => $this->fecha_compra,
             'observaciones'    => $this->observaciones,
             'estado'           => 'pendiente',
-            'sucursal_id'      => 1, // Valor por defecto
+            'sucursal_id'      => 1,
             'total'            => 0
         ]);
 
@@ -50,6 +50,12 @@ class RegistrarCompra extends Component
 
     public function agregarProducto()
     {
+        $this->validate([
+            'producto_id'     => 'required',
+            'cantidad'        => 'required|numeric|min:1',
+            'precio_unitario' => 'required|numeric|min:0',
+        ]);
+
         DetalleCompra::create([
             'compra_id' => $this->compra_id,
             'producto_id' => $this->producto_id,

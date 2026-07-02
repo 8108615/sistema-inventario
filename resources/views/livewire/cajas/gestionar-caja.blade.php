@@ -76,16 +76,37 @@
     <div id="modalApertura" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-gray-800 p-6 rounded-lg w-96 text-white border border-gray-600">
             <h2 class="text-xl mb-4 font-bold">Monto de Apertura</h2>
-            <input type="number" wire:model="saldo_inicial" class="w-full p-2 bg-gray-700 rounded mb-4 text-white border-none">
+
+            <input type="number" wire:model="saldo_inicial"
+                class="w-full p-2 bg-gray-700 rounded mb-1 text-white border-none">
+
+            @error('saldo_inicial')
+                <span class="text-red-500 text-xs block mb-4">{{ $message }}</span>
+            @enderror
+
             <div class="flex justify-end gap-2">
-                <button onclick="document.getElementById('modalApertura').classList.add('hidden')" class="bg-gray-600 px-4 py-2 rounded">Cancelar</button>
-                <button wire:click="abrirCaja" onclick="document.getElementById('modalApertura').classList.add('hidden')" class="bg-blue-600 px-4 py-2 rounded font-bold">Confirmar</button>
+                <button onclick="document.getElementById('modalApertura').classList.add('hidden')"
+                        class="bg-gray-600 px-4 py-2 rounded">Cancelar</button>
+
+                <button wire:click="abrirCaja"
+                        class="bg-blue-600 px-4 py-2 rounded font-bold">Confirmar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // 1. Escuchar para cerrar
+    window.addEventListener('cerrar-modal-apertura', event => {
+        document.getElementById('modalApertura').classList.add('hidden');
+    });
+
+    // 2. NUEVO: Escuchar para mostrar (se dispara cuando falla la validación)
+    window.addEventListener('mostrar-modal-apertura', event => {
+        document.getElementById('modalApertura').classList.remove('hidden');
+    });
+
+    // 3. Tu función original
     function confirmarCierre(id) {
         Swal.fire({
             title: '¿Estás seguro?',

@@ -15,20 +15,25 @@
                     <select wire:model="categoria_id" class="w-full bg-gray-800 p-2 rounded border border-gray-700">
                         @foreach($categorias as $cat) <option value="{{ $cat->id }}">{{ $cat->nombre }}</option> @endforeach
                     </select>
+                    @error('categoria_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
+
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Código (*)</label>
                     <input wire:model="codigo_producto" class="w-full bg-gray-800 p-2 rounded border border-gray-700">
+                    @error('codigo_producto') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Nombre (*)</label>
                     <input wire:model="nombre_producto" class="w-full bg-gray-800 p-2 rounded border border-gray-700">
+                    @error('nombre_producto') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Descripción</label>
                 <textarea wire:model="descripcion" class="w-full h-24 bg-gray-800 border border-gray-700 p-2 rounded"></textarea>
+                @error('descripcion') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <div class="grid grid-cols-6 gap-4">

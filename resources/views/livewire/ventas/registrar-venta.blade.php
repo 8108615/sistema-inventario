@@ -1,5 +1,12 @@
 <div class="p-6 space-y-6">
-    <h2 class="text-2xl font-bold text-white uppercase tracking-wider">Realizar Nueva Venta</h2>
+    <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-white uppercase tracking-wider">Realizar Nueva Venta</h2>
+
+        <a href="{{ route('ventas.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded font-bold uppercase text-sm flex items-center transition">
+            <x-heroicon-o-arrow-left class="w-5 h-5 mr-2" />
+            Volver
+        </a>
+    </div>
 
     <div class="border border-green-600 rounded">
         <div class="bg-green-600 text-white p-2 font-bold uppercase text-sm">1. Datos generales</div>
@@ -21,7 +28,7 @@
                 </div>
                 <div>
                     <label class="text-gray-300 text-xs uppercase">Pago</label>
-                    <select wire:model="metodo_pago" class="w-full bg-gray-900 text-white p-2 rounded border border-gray-700">
+                    <select wire:model.live="metodo_pago" class="w-full bg-gray-900 text-white p-2 rounded border border-gray-700">
                         <option value="EFECTIVO">EFECTIVO</option>
                         <option value="TARJETA">TARJETA</option>
                         <option value="TRASFERENCIA">TRASFERENCIA</option>
@@ -89,14 +96,27 @@
         </div>
     </div>
 
-    <div class="border border-green-600 rounded bg-gray-800 p-6 grid grid-cols-3 gap-4 items-end">
+    <div class="border border-green-600 rounded bg-gray-800 p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+
+        @if($metodo_pago !== 'EFECTIVO')
+            <div>
+                <label class="text-gray-300 text-xs uppercase block">Cód. Transacción</label>
+                <input type="text" wire:model="codigo_transaccion" class="w-full bg-gray-900 text-white p-2 rounded border border-gray-700" placeholder="Número Ref.">
+            </div>
+        @else
+            <div class="hidden md:block"></div>
+        @endif
+
         <div>
             <label class="text-gray-300 text-xs uppercase block">Dinero Recibido</label>
-            <input type="number" step="0.01" wire:model.live="monto_recibido" class="w-full bg-gray-900 text-white p-2 rounded border border-gray-700">
+            <input type="number" step="0.01" wire:model.live="monto_recibido"
+                {{ $metodo_pago !== 'EFECTIVO' ? 'disabled' : '' }}
+                class="w-full {{ $metodo_pago !== 'EFECTIVO' ? 'bg-gray-700 cursor-not-allowed' : 'bg-gray-900' }} text-white p-2 rounded border border-gray-700">
         </div>
         <div>
             <label class="text-gray-300 text-xs uppercase block">Vuelto a Entregar</label>
-            <input type="text" readonly value="{{ number_format($vuelto, 2) }}" class="w-full bg-gray-700 text-white p-2 rounded border border-gray-700 font-bold">
+            <input type="text" readonly value="{{ $metodo_pago !== 'EFECTIVO' ? '0.00' : number_format($vuelto, 2) }}"
+                class="w-full bg-gray-700 text-white p-2 rounded border border-gray-700 font-bold">
         </div>
         <button wire:click="registrarVenta" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded font-bold uppercase">
             Finalizar Venta

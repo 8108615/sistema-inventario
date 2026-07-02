@@ -17,6 +17,17 @@ class EditarProducto extends Component
     public $descripcion, $precio_compra, $precio_venta, $stock_actual, $stock_minimo, $stock_maximo;
     public $unidad_medida, $estado, $imagen, $nueva_imagen;
 
+    protected $rules = [
+        'categoria_id'    => 'required',
+        'codigo_producto' => 'required|max:50',
+        'nombre_producto' => 'required|min:3|max:255',
+        'descripcion'     => 'nullable|max:500',
+        'precio_compra'   => 'required|numeric|min:0',
+        'precio_venta'    => 'required|numeric|min:0',
+        'stock_actual'    => 'required|numeric|min:0',
+        'nueva_imagen'    => 'nullable|image|max:1024', // Opcional al editar
+    ];
+
     public function mount(Producto $producto)
     {
         $this->producto = $producto;
@@ -37,28 +48,27 @@ class EditarProducto extends Component
 
     public function update()
     {
-        $this->validate([
-            'categoria_id' => 'required',
-            'nombre_producto' => 'required',
-            'nueva_imagen' => 'nullable|image|max:1024',
-        ]);
+        // Validamos usando las reglas de arriba
+        $this->validate();
 
         $datos = [
-            'categoria_id' => $this->categoria_id,
+            'categoria_id'    => $this->categoria_id,
             'codigo_producto' => $this->codigo_producto,
-            'codigo_barra' => $this->codigo_barra,
+            'codigo_barra'    => $this->codigo_barra,
             'nombre_producto' => $this->nombre_producto,
-            'descripcion' => $this->descripcion,
-            'precio_compra' => $this->precio_compra,
-            'precio_venta' => $this->precio_venta,
-            'stock_actual' => $this->stock_actual,
-            'stock_minimo' => $this->stock_minimo,
-            'stock_maximo' => $this->stock_maximo,
-            'unidad_medida' => $this->unidad_medida,
-            'estado' => $this->estado,
+            'descripcion'     => $this->descripcion,
+            'precio_compra'   => $this->precio_compra,
+            'precio_venta'    => $this->precio_venta,
+            'stock_actual'    => $this->stock_actual,
+            'stock_minimo'    => $this->stock_minimo,
+            'stock_maximo'    => $this->stock_maximo,
+            'unidad_medida'   => $this->unidad_medida,
+            'estado'          => $this->estado,
         ];
 
+        // Solo procesamos la imagen si el usuario subió una nueva
         if ($this->nueva_imagen) {
+            // Borrar la anterior si existe
             if ($this->imagen) {
                 Storage::disk('public')->delete($this->imagen);
             }
@@ -67,7 +77,11 @@ class EditarProducto extends Component
 
         $this->producto->update($datos);
 
-        session()->flash('alerta_exito', 'Producto actualizado correctamente');
+        $this->dispatch('alerta', [
+            'tipo' => 'success',
+            'mensaje' => 'Producto actualizado correctamente'
+        ]);
+
         return redirect()->route('productos.index');
     }
 

@@ -18,6 +18,7 @@
                                 <option value="">Seleccione un Proveedor</option>
                                 @foreach($proveedores as $p)<option value="{{$p->id}}">{{$p->nombre}}</option>@endforeach
                             </select>
+                            @error('proveedor_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -72,14 +73,17 @@
                             <option value="{{ $prod->id }}">{{ $prod->nombre_producto }}</option> <!-- Cambia 'nombre' si tu campo se llama diferente -->
                         @endforeach
                     </select>
+                    @error('producto_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-300 mb-2">Cantidad (*)</label>
                     <input type="number" wire:model="cantidad" class="w-full bg-gray-900 border border-gray-600 text-white p-2 rounded">
+                    @error('cantidad') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-300 mb-2">Precio Compra (*)</label>
                     <input type="number" wire:model="precio_unitario" class="w-full bg-gray-900 border border-gray-600 text-white p-2 rounded">
+                    @error('precio_unitario') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
             </div>
 

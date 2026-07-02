@@ -12,6 +12,7 @@ class RegistrarVenta extends Component
     public $monto_recibido = 0, $carrito = [], $producto_id, $cantidad = 1;
     public $stock_actual, $precio_venta;
     public $con_impuesto = false;
+    public $codigo_transaccion = '';
 
     protected $rules = [
         'cliente_id' => 'required',
@@ -59,10 +60,21 @@ class RegistrarVenta extends Component
     {
         $this->validate();
 
-        // 1. Calculamos valores finales ANTES de la transacción para usarlos
         $subtotal = collect($this->carrito)->sum('subtotal');
         $impuesto = ($this->con_impuesto) ? ($subtotal * 0.13) : 0;
         $total = $subtotal + $impuesto;
+
+        // --- VALIDACIÓN CONDICIONAL ---
+        if ($this->metodo_pago === 'EFECTIVO') {
+            if ((float)$this->monto_recibido < $total) {
+                $this->dispatch('alerta', [
+                    'tipo' => 'error',
+                    'mensaje' => 'El monto recibido es menor al total de la venta.'
+                ]);
+                return;
+            }
+        }
+        // ------------------------
 
         DB::transaction(function () use ($subtotal, $impuesto, $total) {
             $caja = Caja::where('estado', true)->first();
@@ -74,12 +86,14 @@ class RegistrarVenta extends Component
                 'tipo_comprobante' => $this->tipo_comprobante,
                 'numero_comprobante' => 'V-' . now()->timestamp,
                 'metodo_pago' => $this->metodo_pago,
+                'codigo_transaccion' => ($this->metodo_pago !== 'EFECTIVO') ? $this->codigo_transaccion : null,
                 'fecha_hora' => now(),
                 'subtotal' => $subtotal,
                 'impuesto' => $impuesto,
                 'total' => $total,
-                'monto_recibido' => (float)$this->monto_recibido,
-                'vuelto_entregado' => max(0, (float)$this->monto_recibido - $total),
+                // Si no es efectivo, guardamos el total recibido para que cuadre la caja
+                'monto_recibido' => ($this->metodo_pago === 'EFECTIVO') ? (float)$this->monto_recibido : $total,
+                'vuelto_entregado' => ($this->metodo_pago === 'EFECTIVO') ? (float)$this->monto_recibido - $total : 0,
             ]);
 
             foreach ($this->carrito as $item) {
@@ -96,6 +110,13 @@ class RegistrarVenta extends Component
 
         $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Venta finalizada con éxito']);
         return redirect()->route('ventas.index');
+    }
+
+    public function updatedMetodoPago($value)
+    {
+        if ($value !== 'EFECTIVO') {
+            $this->monto_recibido = 0;
+        }
     }
 
     public function render()

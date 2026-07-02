@@ -16,6 +16,8 @@ class EditarVenta extends Component
     public $monto_recibido = 0;
     public $stock_actual, $precio_venta;
 
+    public $codigo_transaccion;
+
     public function mount($id)
     {
         $this->venta = Venta::with(['detalles.producto', 'cliente'])->findOrFail($id);
@@ -23,6 +25,7 @@ class EditarVenta extends Component
         $this->tipo_comprobante = $this->venta->tipo_comprobante;
         $this->metodo_pago = $this->venta->metodo_pago;
         $this->monto_recibido = $this->venta->monto_recibido;
+        $this->codigo_transaccion = $this->venta->codigo_transaccion;
 
         foreach ($this->venta->detalles as $d) {
             $this->carrito[] = [
@@ -49,6 +52,15 @@ class EditarVenta extends Component
         ];
     }
 
+    public function updatedMetodoPago($value)
+    {
+        if ($value === 'EFECTIVO') {
+            $this->codigo_transaccion = null; // Limpiamos código si cambiamos a efectivo
+        } else {
+            $this->monto_recibido = 0; // Limpiamos monto si cambiamos a transferencia/tarjeta
+        }
+    }
+
     public function eliminarProducto($index)
     {
         unset($this->carrito[$index]);
@@ -57,10 +69,17 @@ class EditarVenta extends Component
 
     public function actualizarVenta()
     {
-        // 1. Calculamos los totales fuera de la transacción para tenerlos disponibles
+        // 1. Calculamos los totales
         $subtotal_calculado = collect($this->carrito)->sum('subtotal');
         $impuesto_calculado = $this->con_impuesto ? ($subtotal_calculado * 0.13) : 0;
         $total_calculado = $subtotal_calculado + $impuesto_calculado;
+
+        // --- NUEVA VALIDACIÓN ---
+        if ($this->metodo_pago === 'EFECTIVO' && (float)$this->monto_recibido < $total_calculado) {
+            $this->dispatch('alerta', ['tipo' => 'error', 'mensaje' => 'El monto recibido es menor al total.']);
+            return;
+        }
+        // ------------------------
 
         DB::transaction(function () use ($subtotal_calculado, $impuesto_calculado, $total_calculado) {
             // 1. Devolver stock anterior
@@ -83,21 +102,21 @@ class EditarVenta extends Component
                 Producto::find($item['producto_id'])->decrement('stock_actual', $item['cantidad']);
             }
 
-            // 4. Actualizar la venta usando las variables calculadas
+            // 4. Actualizar la venta
             $this->venta->update([
                 'cliente_id' => $this->cliente_id,
                 'tipo_comprobante' => $this->tipo_comprobante,
                 'metodo_pago' => $this->metodo_pago,
+                'codigo_transaccion' => ($this->metodo_pago !== 'EFECTIVO') ? $this->codigo_transaccion : null,
                 'subtotal' => $subtotal_calculado,
                 'impuesto' => $impuesto_calculado,
                 'total' => $total_calculado,
-                'monto_recibido' => $this->monto_recibido,
-                'vuelto_entregado' => $this->monto_recibido - $total_calculado,
+                'monto_recibido' => ($this->metodo_pago === 'EFECTIVO') ? (float)$this->monto_recibido : 0,
+                'vuelto_entregado' => ($this->metodo_pago === 'EFECTIVO') ? (float)$this->monto_recibido - $total_calculado : 0,
             ]);
         });
 
         session()->flash('alerta_exito', 'Venta actualizada con éxito');
-
         return redirect()->route('ventas.index');
     }
 
@@ -112,6 +131,8 @@ class EditarVenta extends Component
             $this->precio_venta = 0;
         }
     }
+
+
 
     public function render()
     {

@@ -12,6 +12,14 @@ class EditarLote extends Component
     public $lote;
     public $producto_id, $proveedor_id, $codigo_lote, $cantidad_inicial, $precio_compra, $precio_venta, $fecha_entrada, $fecha_vencimiento;
 
+    protected $rules = [
+        'producto_id'      => 'required',
+        'proveedor_id'     => 'required',
+        'codigo_lote'      => 'required|max:50',
+        'cantidad_inicial' => 'required|numeric|min:1',
+        'fecha_entrada'    => 'required|date',
+    ];
+
     public function mount(Lote $lote)
     {
         $this->lote = $lote;
@@ -27,13 +35,7 @@ class EditarLote extends Component
 
     public function actualizar()
     {
-        $this->validate([
-            'producto_id'      => 'required',
-            'proveedor_id'     => 'required',
-            'codigo_lote'      => 'required|max:50',
-            'cantidad_inicial' => 'required|numeric|min:1',
-            'fecha_entrada'    => 'required|date',
-        ]);
+        $this->validate();
 
         $this->lote->update([
             'producto_id'       => $this->producto_id,
@@ -46,7 +48,11 @@ class EditarLote extends Component
             'fecha_vencimiento' => $this->fecha_vencimiento,
         ]);
 
-        session()->flash('alerta_exito', 'Lote actualizado correctamente');
+        $this->dispatch('alerta', [
+            'tipo' => 'success',
+            'mensaje' => 'Lote actualizado correctamente'
+        ]);
+
         return redirect()->route('lotes.index');
     }
 

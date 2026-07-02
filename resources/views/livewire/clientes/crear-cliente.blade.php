@@ -13,6 +13,7 @@
                     <span class="absolute ml-3 text-gray-400"><i class="fas fa-user"></i></span>
                     <input type="text" wire:model="nombre_cliente" class="w-full bg-gray-900 border border-gray-600 p-2 pl-10 rounded">
                 </div>
+                @error('nombre_cliente') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <!-- Tipo Persona -->
@@ -57,6 +58,7 @@
                 <div class="relative flex items-center">
                     <span class="absolute ml-3 text-gray-400"><i class="fas fa-hashtag"></i></span>
                     <input type="text" wire:model="numero_documento" class="w-full bg-gray-900 border border-gray-600 p-2 pl-10 rounded">
+                    @error('numero_documento') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
             </div>
 
@@ -84,6 +86,7 @@
                 <div class="relative flex items-center">
                     <span class="absolute ml-3 text-gray-400"><i class="fas fa-envelope"></i></span>
                     <input type="email" wire:model="email" class="w-full bg-gray-900 border border-gray-600 p-2 pl-10 rounded">
+                    @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
             </div>
 

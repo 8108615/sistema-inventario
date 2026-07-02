@@ -102,6 +102,16 @@
                         <p><strong>Fecha:</strong> {{ $ventaSeleccionada->fecha_hora }}</p>
                         <p><strong>Total:</strong> {{ $simboloMoneda }}{{ number_format($ventaSeleccionada->total, 2) }}</p>
                     </div>
+                    <div class="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-900 rounded border border-gray-700">
+                        <p><strong>Método de Pago:</strong> {{ $ventaSeleccionada->metodo_pago }}</p>
+
+                        @if($ventaSeleccionada->metodo_pago === 'EFECTIVO')
+                            <p><strong>Dinero Recibido:</strong> {{ $simboloMoneda }}{{ number_format($ventaSeleccionada->monto_recibido, 2) }}</p>
+                            <p><strong>Vuelto Entregado:</strong> {{ $simboloMoneda }}{{ number_format($ventaSeleccionada->vuelto_entregado, 2) }}</p>
+                        @else
+                            <p><strong>Cód. Transacción:</strong> {{ $ventaSeleccionada->codigo_transaccion ?? 'N/A' }}</p>
+                        @endif
+                    </div>
 
                     <table class="w-full text-left">
                         <thead>

@@ -14,6 +14,7 @@
                             @foreach($categorias as $cat) <option value="{{ $cat->id }}">{{ $cat->nombre }}</option> @endforeach
                         </select>
                     </div>
+                    @error('categoria_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Código (*)</label>
@@ -21,6 +22,7 @@
                         <div class="px-3 text-gray-500"><x-heroicon-o-qr-code class="w-5 h-5"/></div>
                         <input wire:model.live="codigo_producto" class="w-full bg-transparent p-2 border-none focus:ring-0" placeholder="Ej. 10001">
                     </div>
+                    @error('codigo_producto') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Nombre (*)</label>
@@ -28,6 +30,7 @@
                         <div class="px-3 text-gray-500"><x-heroicon-o-shopping-bag class="w-5 h-5"/></div>
                         <input wire:model="nombre_producto" class="w-full bg-transparent p-2 border-none focus:ring-0" placeholder="Nombre del producto">
                     </div>
+                    @error('nombre_producto') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
             </div>
 
@@ -36,6 +39,7 @@
                 <textarea wire:model="descripcion" class="w-full h-32 bg-gray-800 border border-gray-700 p-2 rounded focus:border-blue-500 outline-none"></textarea>
             </div>
 
+
             <div class="grid grid-cols-6 gap-4">
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Precio Compra</label>
@@ -43,6 +47,7 @@
                         <div class="px-2 text-gray-500"><x-heroicon-o-currency-dollar class="w-4 h-4"/></div>
                         <input type="number" wire:model="precio_compra" class="w-full bg-transparent p-2 border-none focus:ring-0 text-sm">
                     </div>
+                    @error('precio_compra') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Precio Venta</label>
@@ -50,6 +55,7 @@
                         <div class="px-2 text-gray-500"><x-heroicon-o-currency-dollar class="w-4 h-4"/></div>
                         <input type="number" wire:model="precio_venta" class="w-full bg-transparent p-2 border-none focus:ring-0 text-sm">
                     </div>
+                    @error('precio_venta') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Stock Min.</label>
@@ -57,6 +63,7 @@
                         <div class="px-2 text-gray-500"><x-heroicon-o-arrow-down-circle class="w-4 h-4"/></div>
                         <input type="number" wire:model="stock_minimo" class="w-full bg-transparent p-2 border-none focus:ring-0 text-sm">
                     </div>
+                    @error('stock_minimo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Stock Max.</label>
@@ -64,6 +71,7 @@
                         <div class="px-2 text-gray-500"><x-heroicon-o-arrow-up-circle class="w-4 h-4"/></div>
                         <input type="number" wire:model="stock_maximo" class="w-full bg-transparent p-2 border-none focus:ring-0 text-sm">
                     </div>
+                    @error('stock_maximo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Stock Inicial</label>
@@ -71,6 +79,7 @@
                         <div class="px-2 text-gray-500"><x-heroicon-o-archive-box class="w-4 h-4"/></div>
                         <input type="number" wire:model="stock_actual" class="w-full bg-transparent p-2 border-none focus:ring-0 text-sm" placeholder="0">
                     </div>
+                    @error('stock_actual') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Unidad</label>

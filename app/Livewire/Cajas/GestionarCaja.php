@@ -25,7 +25,17 @@ class GestionarCaja extends Component
 
     public function abrirCaja()
     {
-        $this->validate();
+        // Validamos manualmente para poder controlar el evento
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['saldo_inicial' => $this->saldo_inicial],
+            ['saldo_inicial' => 'required|numeric|min:0']
+        );
+
+        if ($validator->fails()) {
+            // Si falla, disparamos el evento para que el modal se muestre
+            $this->dispatch('mostrar-modal-apertura');
+            $this->validate(); // Esto lanzará la excepción que Livewire necesita para mostrar el error
+        }
 
         Caja::create([
             'nombre_caja' => $this->nombre_caja,
@@ -37,6 +47,7 @@ class GestionarCaja extends Component
 
         $this->reset(['saldo_inicial']);
         $this->dispatch('alerta', ['tipo' => 'success', 'mensaje' => 'Caja aperturada correctamente']);
+        $this->dispatch('cerrar-modal-apertura');
     }
 
     #[On('confirmar-cierre')]

@@ -16,15 +16,23 @@ class CrearProducto extends Component
     public $precio_compra = 0, $precio_venta = 0, $stock_actual = 0, $stock_minimo = 0, $stock_maximo = 0;
     public $unidad_medida = 'UNIDAD', $estado = true, $imagen;
 
+    protected $rules = [
+        'categoria_id'    => 'required',
+        'codigo_producto' => 'required|max:50',
+        'nombre_producto' => 'required|min:3|max:255',
+        'descripcion'     => 'nullable|max:500',
+        'precio_compra'   => 'required|numeric|min:0',
+        'precio_venta'    => 'required|numeric|min:0',
+        'stock_minimo'    => 'required|numeric|min:0',
+        'stock_maximo'    => 'required|numeric|min:0',
+        'stock_actual'    => 'required|numeric|min:0',
+        'imagen'          => 'required|image|max:1024',
+    ];
+
     public function store()
     {
-        $this->validate([
-            'categoria_id'    => 'required',
-            'codigo_producto' => 'required',
-            'nombre_producto' => 'required',
-            'stock_actual'    => 'required|numeric|min:0',
-            'imagen'          => 'required|image|max:1024',
-        ]);
+        // Al dejarlo vacío, Livewire usa automáticamente la propiedad $rules de arriba
+        $this->validate();
 
         $path = $this->imagen->store('productos', 'public');
 
@@ -35,11 +43,11 @@ class CrearProducto extends Component
             'nombre_producto' => $this->nombre_producto,
             'descripcion'     => $this->descripcion,
             'imagen'          => $path,
-            'precio_compra'   => $this->precio_compra ?? 0,
-            'precio_venta'    => $this->precio_venta ?? 0,
-            'stock_actual'    => $this->stock_actual ?? 0,
-            'stock_minimo'    => $this->stock_minimo ?? 0,
-            'stock_maximo'    => $this->stock_maximo ?? 0,
+            'precio_compra'   => $this->precio_compra,
+            'precio_venta'    => $this->precio_venta,
+            'stock_actual'    => $this->stock_actual,
+            'stock_minimo'    => $this->stock_minimo,
+            'stock_maximo'    => $this->stock_maximo,
             'unidad_medida'   => $this->unidad_medida,
             'estado'          => $this->estado,
         ]);
@@ -49,7 +57,6 @@ class CrearProducto extends Component
             'mensaje' => 'Producto guardado correctamente'
         ]);
 
-        // Y luego redireccionamos (el evento se disparará justo antes del cambio de página)
         return redirect()->route('productos.index');
     }
 

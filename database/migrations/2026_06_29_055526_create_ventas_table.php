@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('tipo_comprobante', ['Boleta', 'Factura'])->default('Boleta');
             $table->string('numero_comprobante')->unique();
             $table->enum('metodo_pago', ['EFECTIVO', 'TARJETA', 'TRASFERENCIA']);
+            $table->string('codigo_transaccion')->nullable();
             $table->dateTime('fecha_hora');
             $table->decimal('subtotal', 10, 2, true); // Ampliado a 10 para mayor seguridad
             $table->decimal('impuesto', 10, 2, true);

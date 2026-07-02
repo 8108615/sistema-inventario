@@ -47,16 +47,19 @@
             <div>
                 <label class="block text-sm font-medium mb-1">Precio Compra</label>
                 <input type="number" step="0.01" wire:model="precio_compra" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-white">
+                @error('precio_compra') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <div>
                 <label class="block text-sm font-medium mb-1">Precio Venta</label>
                 <input type="number" step="0.01" wire:model="precio_venta" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-white">
+                @error('precio_venta') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <div>
                 <label class="block text-sm font-medium mb-1">Fecha Entrada</label>
                 <input type="date" wire:model="fecha_entrada" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-white">
+                @error('fecha_entrada') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
 
             <div>
